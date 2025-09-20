@@ -6,7 +6,7 @@ const articles = [
         "date": "2024-01-01",
         "tags": ["虚拟", "测试"],
         "word_count": 100,
-        "image": "../../../assets/images/33.jpg",
+        "image": "../../../assets/images/33.JPG",
         "description": "这是第一篇虚拟文章的描述。",
         "folder": "模版修改-1"
     }

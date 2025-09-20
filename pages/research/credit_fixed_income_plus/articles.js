@@ -8,6 +8,6 @@ const articles = [
         id: '2024074452301',
         word_count: 100, // 添加字数
         description: '是一篇文章这是一篇文章这是一篇文章这是一篇文章这是一篇文章这是一篇文章这是一篇文章这是一篇文章这是一篇文。',
-        image: '../../../assets/images/22.jpg'
+        image: '../../../assets/images/22.JPG'
     }
 ];
