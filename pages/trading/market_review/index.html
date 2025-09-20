@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复盘与展望 - Scalare</title>
+    <link rel="stylesheet" href="../../../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Oswald:wght@900&display=swap" rel="stylesheet">
+    <style>
+        main {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+        .calendar-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .calendar-header {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-color: #343a40;
+            border-bottom: none;
+        }
+        .calendar-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: white;
+        }
+        .calendar-header .calendar-nav:first-child {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .calendar-header .calendar-nav:last-child {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .calendar-nav button {
+            background: none;
+            border: 1px solid white;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.2em;
+            width: 40px;
+            height: 40px;
+            margin: 0 5px;
+            transition: background-color 0.2s;
+        }
+        .calendar-nav button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+        .calendar-day-name {
+            text-align: center;
+            padding: 15px 0;
+            font-weight: 700;
+            color: #666;
+            background-color: #fcfcfc;
+        }
+        .calendar-day {
+            border-bottom: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            min-height: 120px;
+            padding: 8px;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+        .calendar-day:nth-child(7n) {
+            border-right: none;
+        }
+        .calendar-day.has-event:hover {
+            background-color: #f0f8ff; /* Light blue on hover */
+        }
+        .day-number {
+            font-size: 0.9em;
+            font-weight: 700;
+        }
+        .day-other-month .day-number {
+            opacity: 0.3;
+        }
+        .day-event {
+            background-color: #007bff;
+            color: white;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            margin-top: 5px;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+        }
+        .day-event:hover {
+            background-color: #0056b3;
+        }
+        .day-event.multi-event:nth-of-type(1) {
+            background-color: #007bff; /* Standard blue */
+        }
+        .day-event.multi-event:nth-of-type(1):hover {
+            background-color: #0056b3;
+        }
+        .day-event.multi-event:nth-of-type(2) {
+            background-color: #0056b3; /* Darker blue */
+        }
+        .day-event.multi-event:nth-of-type(2):hover {
+            background-color: #004085;
+        }
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+        }
+        .calendar-nav input[type="month"] {
+            margin-right: 5px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><a href="../../../index.html">Scalare</a></h1>
+        <nav>
+            <ul>
+                <li><a href="../../../index.html">首页</a></li>
+                <li><a href="../../sharer/index.html">分享者</a></li>
+                <li class="dropdown dropdown-right">
+                    <a href="#" class="active">研究</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="../bond_basics/index.html">债市基础</a></li>
+                        <li><a href="../macro_interest_rate/index.html">宏观利率</a></li>
+                        <li><a href="../quant_strategy/index.html">量化策略</a></li>
+                        <li><a href="../fx_commodities/index.html">外汇与商品</a></li>
+                        <li><a href="../derivatives/index.html">衍生品</a></li>
+                        <li><a href="../institutional_behavior/index.html">机构行为</a></li>
+                        <li><a href="../credit_fixed_income_plus/index.html">信用及固收+</a></li>
+                        <li><a href="../overseas/index.html">海外</a></li>
+                        <li><a href="../crypto/index.html">Crypto</a></li>
+                        <li><a href="../other_insights/index.html">其他洞察</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown dropdown-right">
+                    <a href="#">交易</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="../../trading/market_review/index.html">复盘与展望</a></li>
+                        <li><a href="../../trading/macro_database/index.html">宏观数据库</a></li>
+                        <li><a href="../../trading/strategy_tracking/index.html">策略跟踪</a></li>
+                        <li><a href="../../trading/asset_allocation_map/index.html">大类资产版图</a></li>
+                        <li><a href="../../trading/trading_calendar/index.html">交易日历</a></li>
+                        <li><a href="../../trading/trading_assistant/index.html">交易助手</a></li>
+                    </ul>
+                </li>
+                <li><a href="../../portfolio/index.html">投资组合</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <div class="calendar-nav">
+                    <button id="prev-month">&lt;</button>
+                </div>
+                <h2 id="current-month-year"></h2>
+                <div class="calendar-nav">
+                     <input type="month" id="month-picker">
+                    <button id="next-month">&gt;</button>
+                </div>
+            </div>
+            </div>
+            <div class="calendar-grid" id="weekdays"></div>
+            <div class="calendar-grid" id="calendar-days"></div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Scalare. All Rights Reserved.</p>
+    </footer>
+    <script src="events.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const monthYearElement = document.getElementById('current-month-year');
+            const weekdaysElement = document.getElementById('weekdays');
+            const daysElement = document.getElementById('calendar-days');
+            const prevMonthButton = document.getElementById('prev-month');
+            const nextMonthButton = document.getElementById('next-month');
+            const monthPicker = document.getElementById('month-picker');
+
+            let currentDate = new Date();
+
+            const weekdayNames = ['日', '一', '二', '三', '四', '五', '六'];
+            weekdayNames.forEach(name => {
+                const dayNameElement = document.createElement('div');
+                dayNameElement.className = 'calendar-day-name';
+                dayNameElement.textContent = name;
+                weekdaysElement.appendChild(dayNameElement);
+            });
+
+            function renderCalendar() {
+                daysElement.innerHTML = '';
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth();
+
+                monthYearElement.textContent = `${year}年${month + 1}月`;
+                monthPicker.value = `${year}-${String(month + 1).padStart(2, '0')}`;
+
+                const firstDayOfMonth = new Date(year, month, 1);
+                const lastDayOfMonth = new Date(year, month + 1, 0);
+                const lastDayOfPrevMonth = new Date(year, month, 0);
+
+                const startDayOfWeek = firstDayOfMonth.getDay();
+                const totalDays = lastDayOfMonth.getDate();
+                const prevMonthDays = lastDayOfPrevMonth.getDate();
+
+                // Days from previous month
+                for (let i = startDayOfWeek; i > 0; i--) {
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-day day-other-month';
+                    dayElement.innerHTML = `<div class="day-number">${prevMonthDays - i + 1}</div>`;
+                    daysElement.appendChild(dayElement);
+                }
+
+                // Days of current month
+                for (let i = 1; i <= totalDays; i++) {
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-day';
+                    const dayNumberDiv = document.createElement('div');
+                    dayNumberDiv.className = 'day-number';
+                    dayNumberDiv.textContent = i;
+                    dayElement.appendChild(dayNumberDiv);
+
+                    const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+                    const eventsForDay = events.filter(e => e.date === dateString);
+
+                    if (eventsForDay.length === 1) {
+                        dayElement.classList.add('has-event');
+                        dayElement.style.cursor = 'pointer';
+                        dayElement.addEventListener('click', () => {
+                            window.location.href = eventsForDay[0].url;
+                        });
+                        const eventLink = document.createElement('div');
+                        eventLink.className = 'day-event';
+                        eventLink.textContent = eventsForDay[0].title;
+                        dayElement.appendChild(eventLink);
+                    } else if (eventsForDay.length > 1) {
+                        eventsForDay.forEach((event, index) => {
+                            const eventLink = document.createElement('a');
+                            eventLink.className = 'day-event multi-event';
+                            eventLink.href = event.url;
+                            eventLink.textContent = event.title;
+                            dayElement.appendChild(eventLink);
+                        });
+                    }
+
+                    daysElement.appendChild(dayElement);
+                }
+
+                // Days from next month
+                const remainingCells = 42 - (startDayOfWeek + totalDays);
+                for (let i = 1; i <= remainingCells; i++) {
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-day day-other-month';
+                    dayElement.innerHTML = `<div class="day-number">${i}</div>`;
+                    daysElement.appendChild(dayElement);
+                }
+            }
+
+            prevMonthButton.addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                renderCalendar();
+            });
+
+            nextMonthButton.addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                renderCalendar();
+            });
+
+            monthPicker.addEventListener('change', (e) => {
+                const [year, month] = e.target.value.split('-').map(Number);
+                currentDate = new Date(year, month - 1);
+                renderCalendar();
+            });
+
+            renderCalendar();
+        });
+    </script>
+</body>
+</html>

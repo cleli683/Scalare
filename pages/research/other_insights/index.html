@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>债市基础</title>
+    <link rel="stylesheet" href="../../../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Oswald:wght@900&display=swap" rel="stylesheet">
+    <style>
+        .filter-buttons button {
+            margin-left: 5px;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .filter-buttons button.active {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+
+        .sort-controls-group {
+            flex-basis: 100%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><a href="../../../index.html">Scalare</a></h1>
+        <nav>
+            <ul>
+                <li><a href="../../../index.html">首页</a></li>
+                <li><a href="../../sharer/index.html">分享者</a></li>
+                <li class="dropdown dropdown-right">
+                    <a href="#" class="active">研究</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="../bond_basics/index.html">债市基础</a></li>
+                        <li><a href="../macro_interest_rate/index.html">宏观利率</a></li>
+                        <li><a href="../quant_strategy/index.html">量化策略</a></li>
+                        <li><a href="../fx_commodities/index.html">外汇与商品</a></li>
+                        <li><a href="../derivatives/index.html">衍生品</a></li>
+                        <li><a href="../institutional_behavior/index.html">机构行为</a></li>
+                        <li><a href="../credit_fixed_income_plus/index.html">信用及固收+</a></li>
+                        <li><a href="../overseas/index.html">海外</a></li>
+                        <li><a href="../crypto/index.html">Crypto</a></li>
+                        <li><a href="../other_insights/index.html">其他洞察</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown dropdown-right">
+                    <a href="#">交易</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="../../trading/market_review/index.html">复盘与展望</a></li>
+                        <li><a href="../../trading/macro_database/index.html">宏观数据库</a></li>
+                        <li><a href="../../trading/strategy_tracking/index.html">策略跟踪</a></li>
+                        <li><a href="../../trading/asset_allocation_map/index.html">大类资产版图</a></li>
+                        <li><a href="../../trading/trading_calendar/index.html">交易日历</a></li>
+                        <li><a href="../../trading/trading_assistant/index.html">交易助手</a></li>
+                    </ul>
+                </li>
+                <li><a href="../../portfolio/index.html">投资组合</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="article-list-container">
+            <h2>其他洞察</h2>
+            
+            <div class="filter-section">
+                <div class="search-group">
+                    <div class="filter-group">
+                        <input type="text" id="keyword-search" placeholder="按标题关键词搜索...">
+                    </div>
+                    <div class="filter-group">
+                        <input type="text" id="id-search" placeholder="按编号搜索...">
+                    </div>
+                    <div class="filter-group">
+                        <input type="month" id="date-filter">
+                    </div>
+                    <div class="filter-group">
+                        <button id="filter-reset">重置筛选</button>
+                    </div>
+                </div>
+                <div class="filter-controls-group">
+                    <div class="filter-group">
+                        <div id="author-filter-buttons" class="filter-buttons">
+                            <span class="filter-label">作者:</span>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <div id="tag-filter-buttons" class="filter-buttons">
+                            <span class="filter-label">标签:</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="sort-controls-group">
+                    <div class="filter-group">
+                        <div class="filter-buttons">
+                            <span class="filter-label">排序:</span>
+                            <button id="sort-by-date" class="active">按日期</button>
+                            <button id="sort-by-author">按作者</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layout-controls">
+                <span>每行显示:</span>
+                <button data-columns="1">1</button>
+                <button data-columns="2" class="active">2</button>
+                <button data-columns="3">3</button>
+                <button data-columns="4">4</button>
+                <span style="margin-left: 20px;">每页显示:</span>
+                <select id="articles-per-page-select">
+                    <option value="10">10</option>
+                    <option value="20" selected>20</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+
+            <div class="article-list">
+                <!-- Articles will be dynamically loaded here -->
+            </div>
+
+            <div id="pagination-container"></div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Scalare. 版权所有。</p>
+    </footer>
+    <script src="articles.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const articleList = document.querySelector('.article-list');
+            const layoutControls = document.querySelector('.layout-controls');
+            const paginationContainer = document.getElementById('pagination-container');
+            const articlesPerPageSelect = document.getElementById('articles-per-page-select');
+            const sortByDateBtn = document.getElementById('sort-by-date');
+            const sortByAuthorBtn = document.getElementById('sort-by-author');
+
+            let currentPage = 1;
+            let articlesPerPage = parseInt(articlesPerPageSelect.value);
+            let filteredArticles = [...articles];
+            let currentSort = 'date'; // 'date' or 'author'
+
+            function applySort(articlesToSort) {
+                let sorted = [...articlesToSort];
+                if (currentSort === 'date') {
+                    // Sort by date descending (newest first)
+                    sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
+                } else if (currentSort === 'author') {
+                    // Sort by author ascending (A-Z)
+                    sorted.sort((a, b) => a.author.localeCompare(b.author));
+                }
+                return sorted;
+            }
+            
+            function displayArticles(articlesToDisplay, page = 1) {
+                articleList.innerHTML = ''; 
+                currentPage = page;
+
+                if (articlesToDisplay.length === 0) {
+                    articleList.innerHTML = '<p>正在学习的路上......</p>';
+                    setupPagination([]);
+                    return;
+                }
+
+                const start = (page - 1) * articlesPerPage;
+                const end = start + articlesPerPage;
+                const paginatedArticles = articlesToDisplay.slice(start, end);
+
+                paginatedArticles.forEach(article => {
+                    const articlePath = `./articles/${article.folder}/index.html`;
+                    const articleCard = document.createElement('a');
+                    articleCard.className = 'article-card';
+                    articleCard.href = articlePath;
+
+                    const tagsHTML = article.tags.map(tag => `<span>${tag}</span>`).join('');
+
+                    articleCard.innerHTML = `
+                        <div class="article-card-text">
+                            <div class="article-card-header">
+                                <h3>${article.title}</h3>
+                                <p class="article-id">No.${article.id}</p>
+                            </div>
+                            <div class="article-meta-group">
+                                <p class="article-meta">作者: ${article.author}</p>
+                                <p class="article-meta">发布日期: ${article.date}</p>
+                                <p class="article-meta article-word-count">字数: ${article.word_count}</p>
+                            </div>
+                            <div class="article-tags">
+                                ${tagsHTML}
+                            </div>
+                        </div>
+                        <div class="article-card-image">
+                            <img src="${article.image}" alt="${article.title}">
+                            <p class="article-description">${article.description}</p>
+                        </div>
+                    `;
+                    articleList.appendChild(articleCard);
+                });
+            }
+
+            function setupPagination(articlesToDisplay) {
+                paginationContainer.innerHTML = '';
+                const pageCount = Math.ceil(articlesToDisplay.length / articlesPerPage);
+
+                // Always show pagination if there are articles
+                if (articlesToDisplay.length === 0 && pageCount <= 1) return;
+
+                for (let i = 1; i <= pageCount; i++) {
+                    const btn = document.createElement('button');
+                    btn.innerText = i;
+                    btn.classList.add('pagination-button');
+                    if (i === currentPage) {
+                        btn.classList.add('active');
+                    }
+                    btn.addEventListener('click', () => {
+                        displayArticles(articlesToDisplay, i);
+                        // Scroll to the top of the article list
+                        articleList.scrollIntoView({ behavior: 'smooth' });
+                        // Update active button
+                        document.querySelectorAll('.pagination-button').forEach(button => button.classList.remove('active'));
+                        btn.classList.add('active');
+                    });
+                    paginationContainer.appendChild(btn);
+                }
+            }
+
+            if (typeof articles === 'undefined' || articles.length === 0) {
+                articleList.innerHTML = '<p>正在学习的路上......</p>';
+                if(layoutControls) layoutControls.style.display = 'none';
+                const filterSection = document.querySelector('.filter-section');
+                if (filterSection) filterSection.style.display = 'none';
+                return;
+            }
+
+            articlesPerPageSelect.addEventListener('change', (e) => {
+                articlesPerPage = parseInt(e.target.value);
+                const sorted = applySort(filteredArticles);
+                displayArticles(sorted, 1);
+                setupPagination(sorted);
+            });
+
+            sortByDateBtn.addEventListener('click', () => {
+                currentSort = 'date';
+                sortByDateBtn.classList.add('active');
+                sortByAuthorBtn.classList.remove('active');
+                const sorted = applySort(filteredArticles);
+                displayArticles(sorted, 1);
+                setupPagination(sorted);
+            });
+
+            sortByAuthorBtn.addEventListener('click', () => {
+                currentSort = 'author';
+                sortByAuthorBtn.classList.add('active');
+                sortByDateBtn.classList.remove('active');
+                const sorted = applySort(filteredArticles);
+                displayArticles(sorted, 1);
+                setupPagination(sorted);
+            });
+
+            // --- Layout Switching Logic ---
+            function applyLayout(columns) {
+                if (columns) {
+                    articleList.style.gridTemplateColumns = `repeat(${columns}, 320px)`;
+                }
+            }
+
+            if (layoutControls) {
+                // Set initial layout based on the active button
+                const activeButton = layoutControls.querySelector('button.active');
+                if (activeButton) {
+                    applyLayout(activeButton.dataset.columns);
+                }
+
+                // Add click listener for layout switching
+                layoutControls.addEventListener('click', function(e) {
+                    if (e.target.tagName === 'BUTTON') {
+                        const columns = e.target.dataset.columns;
+                        if (columns) {
+                            // Remove active class from all buttons
+                            layoutControls.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                            // Add active class to the clicked button
+                            e.target.classList.add('active');
+                            // Update the grid layout
+                            applyLayout(columns);
+                        }
+                    }
+                });
+            }
+            // Initial display
+            filteredArticles = applySort(articles);
+            displayArticles(filteredArticles, 1);
+            setupPagination(filteredArticles);
+
+            // --- Filter Logic ---
+            const keywordSearch = document.getElementById('keyword-search');
+            const idSearch = document.getElementById('id-search');
+            const authorFilterButtons = document.getElementById('author-filter-buttons');
+            const dateFilter = document.getElementById('date-filter');
+            const tagFilterButtons = document.getElementById('tag-filter-buttons');
+            const filterReset = document.getElementById('filter-reset');
+
+            // Populate filter buttons
+            function populateFilterButtons(container, items, type) {
+                const uniqueItems = [...new Set(items)];
+                uniqueItems.forEach(item => {
+                    const button = document.createElement('button');
+                    button.textContent = item;
+                    button.dataset.type = type;
+                    button.dataset.value = item;
+                    container.appendChild(button);
+                });
+            }
+
+            const allAuthors = articles.flatMap(a => a.author);
+            const allTags = articles.flatMap(a => a.tags);
+            populateFilterButtons(authorFilterButtons, allAuthors, 'author');
+            populateFilterButtons(tagFilterButtons, allTags, 'tag');
+
+            // Add click listener for filter buttons
+            [authorFilterButtons, tagFilterButtons].forEach(container => {
+                container.addEventListener('click', e => {
+                    if (e.target.tagName === 'BUTTON') {
+                        e.target.classList.toggle('active');
+                        filterArticles();
+                    }
+                });
+            });
+
+            function filterArticles() {
+                const keyword = keywordSearch.value.toLowerCase();
+                const id = idSearch.value;
+                const selectedAuthors = [...authorFilterButtons.querySelectorAll('button.active')].map(b => b.dataset.value);
+                const selectedMonth = dateFilter.value; // YYYY-MM
+                const selectedTags = [...tagFilterButtons.querySelectorAll('button.active')].map(b => b.dataset.value);
+
+                filteredArticles = articles.filter(article => {
+                    const titleMatch = article.title.toLowerCase().includes(keyword);
+                    const idMatch = article.id.toString().includes(id);
+                    const authorMatch = selectedAuthors.length === 0 || selectedAuthors.includes(article.author);
+                    const dateMatch = !selectedMonth || article.date.startsWith(selectedMonth);
+                    const tagMatch = selectedTags.length === 0 || selectedTags.some(tag => article.tags.includes(tag));
+
+                    return titleMatch && idMatch && authorMatch && dateMatch && tagMatch;
+                });
+
+                const sorted = applySort(filteredArticles);
+                displayArticles(sorted, 1);
+                setupPagination(sorted);
+            }
+
+            [keywordSearch, idSearch].forEach(el => {
+                el.addEventListener('keyup', filterArticles);
+            });
+            dateFilter.addEventListener('change', filterArticles);
+
+            filterReset.addEventListener('click', () => {
+                keywordSearch.value = '';
+                idSearch.value = '';
+                dateFilter.value = '';
+                [...authorFilterButtons.querySelectorAll('button.active')].forEach(b => b.classList.remove('active'));
+                [...tagFilterButtons.querySelectorAll('button.active')].forEach(b => b.classList.remove('active'));
+                filteredArticles = [...articles];
+                
+                // Reset sort
+                currentSort = 'date';
+                sortByDateBtn.classList.add('active');
+                sortByAuthorBtn.classList.remove('active');
+
+                const sorted = applySort(filteredArticles);
+                displayArticles(sorted, 1);
+                setupPagination(sorted);
+            });
+
+        });
+    </script>
+</body>
+</html>
